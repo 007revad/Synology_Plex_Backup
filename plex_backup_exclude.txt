@@ -1,0 +1,6 @@
+Cache
+Codecs
+Crash Reports
+Diagnostics
+Logs
+Updates
