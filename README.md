@@ -1,5 +1,7 @@
 # Synology_Plex_Backup
- 
+
+[![HitCount](https://hits.dwyl.com/007revad/Synology_Plex_Backup.svg?style=flat-square)](http://hits.dwyl.com/007revad/Synology_Plex_Backup)
+
 ### Description
 
 This is a bash script to backup a Synology's Plex Media Server settings and database, and log the results.
