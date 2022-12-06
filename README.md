@@ -28,7 +28,7 @@ The script was written to work on DSM 7.x and DSM 6.x (**though it has only been
 -   Logging every file that was backed up.
 -   Logging any errors to a separate error log file to make it easy for you to see if there were errors.
 
-The Synology's hostname, date, and Plex Media Server version are included in the backup's filename in case you need to roll Plex back to an older version or you save backups from more than one Plex Servers.
+The Synology's hostname, date, and Plex Media Server version are included in the backup's filename in case you need to roll Plex back to an older version or you save backups from more than one Plex Server.
 
 **Example of the backup's auto-generated filenames:** 
 -   DISKSTATION_20221025_Plex_1.29.0.6244_Backup.tgz
@@ -37,7 +37,7 @@ The Synology's hostname, date, and Plex Media Server version are included in the
 
 If you run multiple backups on the same day the time will be included in the filename.
 
-**Example of the backup's auto-generated filenames:** 
+**Example of the backup's auto-generated filenames when run more than once on the same day:** 
 -   DISKSTATION_20221025_1920_Plex_1.29.0.6244_Backup.tgz
 -   DISKSTATION_20221025_1920_Plex_1.29.0.6244_Backup.log
 
