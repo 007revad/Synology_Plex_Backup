@@ -20,13 +20,13 @@ The script works in DSM 7 and DSM 6.
 -   Stops Plex Media Server, then checks Plex actually stopped.
 -   Backs up Plex Media Server to a tgz file (**excluding the folders listed in plex_backup_exclude.txt**).
 -   Starts Plex Media Server.
--   Adds an entry to the Synology's system log stating if the backup succeded or failed.
--   Sends a notification to DSM if Plex Backup completed, or had errors (**only works in DSM 6 for now**).
+-   Optionally adds an entry to the Synology's system log stating if the backup succeded or failed.
+-   Optionally sends a notification to DSM if Plex Backup completed, or had errors (**only works in DSM 6 for now**).
 
 #### It also saves a log in the same location as the backup file, including:
 
 -   Logging the start and end time plus how long the backup took.
--   Logging every file that was backed up.
+-   Logging every file that was backed up (can be disabled).
 -   Logging any errors to a separate error log file to make it easy for you to see if there were errors.
 
 The Synology's hostname, date, and Plex Media Server version are included in the backup's filename in case you need to roll Plex back to an older version or you save backups from more than one Plex Server.
