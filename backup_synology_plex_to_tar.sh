@@ -2,7 +2,7 @@
 # shellcheck disable=SC2317,SC2181
 #--------------------------------------------------------------------------
 # Backup Synology NAS Plex Database to tgz file in Backup folder.
-# v1.6.0  15-Dec-2022  007revad
+# v1.6.1  16-Dec-2022  007revad
 #
 # Working in DSM 7 and DSM 6 - Tested in DSM 7.1.1 and DSM 6.2.4
 #
@@ -15,7 +15,7 @@
 # To do a test run on just Plex's Logs folder run:
 # /volume1/scripts/backup_synology_plex_to_tar.sh test
 #
-# Gist on Github: https://gist.github.com/007revad
+# Github: https://github.com/007revad/Synology_Plex_Backup
 # Script verified at https://www.shellcheck.net/
 #--------------------------------------------------------------------------
 
@@ -80,7 +80,6 @@ NowLong=$( date '+%Y%m%d-%H%M')
 #--------------------------------------------------------------------------
 # Set NAS name (used in backup and log filenames)
 
-#case "$Name" in
 case "${Name,,}" in
     brand)
         # Get NAS Brand
@@ -91,7 +90,7 @@ case "${Name,,}" in
     model)
         # Get Synology model
         if [[ -f /proc/sys/kernel/syno_hw_version ]]; then
-            Nas=$(cat /proc/sys/kernel/syno_hw_version)
+            Nas="$(cat /proc/sys/kernel/syno_hw_version)"
         fi
         ;;
     hostname|"")
@@ -162,14 +161,14 @@ cleanup() {
             # Add script name to top of log file
             basename -- "$0" |& tee -a "${Log_File}"
         fi
-        echo -e "\nWARNING Plex backup had errors! See error log:" |& tee -a "${Log_File}"
-        #echo "${Err_Log_File}" |& tee -a "${Log_File}"
+        echo -e "\n\e[41mWARNING\e[0m Plex backup had errors! See error log:"
+        echo -e "\nWARNING Plex backup had errors! See error log:" >> "${Log_File}"
         # Remove /volume#/ from error log path
         Err_Log_Short=$(printf %s "${Err_Log_File}"| sed "s/\/volume.*\///g")
         echo -e "${Err_Log_Short}\n" |& tee -a "${Log_File}"
 
         # Add entry to Synology system log
-        if [[ $Brand == "Synology" ]] && [[ ${SysLog,,} == "yes" ]]; then
+        if [[ ${Brand,,} == "synology" ]] && [[ ${SysLog,,} == "yes" ]]; then
             if [[ $Version ]]; then
                 synologset1 sys warn 0x11100000 "Plex ${Version} backup had errors. See ERROR.log"
             else
@@ -186,7 +185,8 @@ cleanup() {
             # Add DSM 7 notification
             #synodsmnotify @administrators "Plex Backup Errors" "See: ${Backup_Name}_ERROR.log"
             # returns: title: 'Plex Backup Errors' is neither mail string key nor i18n format.
-            synodsmnotify @administrators '{"Plex Backup Errors" "See: ${Backup_Name}_ERROR.log"}'
+            # until we get synodsmnotify working, suppress stdout errors with >/dev/null
+            synodsmnotify @administrators '{"Plex Backup Errors" "See: ${Backup_Name}_ERROR.log"}' >/dev/null
             # returns: title: '{"Plex Backup Errors" "See: ${Backup_Name}_ERROR.log"}' is not mail string key
             # Send email and/or SMS
 ###            synonotify PKGHasUpgrade '{"%PKG_HAS_UPDATE%": "Plex Media Server\n\nSyno.Plex Update task failed. DSM not sufficient version."}'
@@ -196,7 +196,7 @@ cleanup() {
         echo -e "\nPlex backup completed successfully" |& tee -a "${Log_File}"
 
         # Add entry to Synology system log
-        if [[ $Brand == "Synology" ]] && [[ ${SysLog,,} == "yes" ]]; then
+        if [[ ${Brand,,} == "synology" ]] && [[ ${SysLog,,} == "yes" ]]; then
             if [[ $Version ]]; then
                 synologset1 sys info 0x11100000 "Plex ${Version} backup completed successfully"
             else
@@ -214,7 +214,8 @@ cleanup() {
             # Add DSM 7 notification - NOT WORKING YET
             #synodsmnotify @administrators "Plex Backup Finished" "Plex backup completed successfully."
             # returns: title: 'Plex Backup Finished' is neither mail string key nor i18n format.
-            synodsmnotify @administrators '{"Plex Backup Finished" "Plex backup completed successfully."}'
+            # until we get synodsmnotify working, suppress stdout errors with >/dev/null
+            synodsmnotify @administrators '{"Plex Backup Finished" "Plex backup completed successfully."}' >/dev/null
             # returns: title: '{"Plex Backup Finished" "Plex backup completed successfully."}' is not mail string key
             # Send email and/or SMS - NOT WORKING YET
 ###            synonotify PKGHasUpgrade '{"%PKG_HAS_UPDATE%": "Plex Media Server\n\nSyno.Plex Update task failed. DSM not sufficient version."}'
@@ -234,14 +235,14 @@ if [[ $( whoami ) != "root" ]]; then
         echo ERROR: This script must be run as root! |& tee -a "${Tmp_Err_Log_File}"
         echo ERROR: "$( whoami )" is not root. Aborting. |& tee -a "${Tmp_Err_Log_File}"
     else
-        # Can't log error because $Backup_Directory does not exist
+        # Can't log error to log file because $Backup_Directory does not exist
         echo
         echo ERROR: This script must be run as root!
         echo ERROR: "$( whoami )" is not root. Aborting.
         echo
     fi
     # Add entry to Synology system log
-    if [[ $Brand == "Synology" ]] && [[ ${SysLog,,} == "yes" ]]; then
+    if [[ ${Brand,,} == "synology" ]] && [[ ${SysLog,,} == "yes" ]]; then
         synologset1 sys warn 0x11100000 "Plex backup failed. Needs to run as root."
     fi
     # Abort script because it isn't being run by root
@@ -255,12 +256,12 @@ fi
 if [[ -f /etc/synoinfo.conf ]]; then Brand="$(get_key_value /etc/synoinfo.conf company_title)"; fi
 # Returns: Synology
 
-if [[ $Brand != "Synology" ]]; then
+if [[ ${Brand,,} != "synology" ]]; then
     if [[ -d $Backup_Directory ]]; then
         echo Checking script is running on a Synology NAS |& tee -a "${Tmp_Err_Log_File}"
         echo ERROR: "$( hostname )" is not a Synology! Aborting. |& tee -a "${Tmp_Err_Log_File}"
     else
-        # Can't log error because $Backup_Directory does not exist
+        # Can't log error to log file because $Backup_Directory does not exist
         echo
         echo Checking script is running on a Synology NAS
         echo ERROR: "$( hostname )" is not a Synology! Aborting.
@@ -298,11 +299,14 @@ else
     exit 255
 fi
 
+
+#--------------------------------------------------------------------------
 # Check Plex Media Server data path exists
+
 if [[ ! -d $Plex_Data_Path ]]; then
     echo Plex Media Server data path invalid! Aborting. |& tee -a "${Tmp_Err_Log_File}"
     echo "${Plex_Data_Path}" |& tee -a "${Tmp_Err_Log_File}"
-    if [[ $Brand == "Synology" ]] && [[ ${SysLog,,} == "yes" ]]; then
+    if [[ ${Brand,,} == "synology" ]] && [[ ${SysLog,,} == "yes" ]]; then
         # Add entry to Synology system log
         synologset1 sys warn 0x11100000 "Plex backup failed. Plex data path invalid."
     fi
@@ -344,7 +348,7 @@ Err_Log_File="${Backup_Directory}"/"${Backup_Name}"_ERROR.log
 # Start logging
 
 # Log NAS brand, model, DSM version and hostname
-Model=$(cat /proc/sys/kernel/syno_hw_version)
+Model="$(cat /proc/sys/kernel/syno_hw_version)"
 DSMversion="$(get_key_value /etc.defaults/VERSION productversion)"
 BuildNum="$(get_key_value /etc.defaults/VERSION buildnumber)"
 echo "${Brand}" "${Model}" DSM "${DSMversion}"-"${BuildNum}" |& tee -a "${Log_File}"
@@ -359,7 +363,7 @@ echo Plex version: "${Version}" |& tee -a "${Log_File}"
 
 if [[ ! -d $Backup_Directory ]]; then
     echo "ERROR: Backup directory not found! Aborting backup." |& tee -a "${Log_File}" "${Tmp_Err_Log_File}"
-    if [[ $Brand == "Synology" ]] && [[ ${SysLog,,} == "yes" ]]; then
+    if [[ ${Brand,,} == "synology" ]] && [[ ${SysLog,,} == "yes" ]]; then
         # Add entry to Synology system log
         synologset1 sys warn 0x11100000 "Plex backup failed. Backup directory not found."
     fi
@@ -380,7 +384,7 @@ sleep 5
 
 
 #--------------------------------------------------------------------------
-# Check if Plex has stopped
+# Check if all Plex processes have stopped
 
 echo Checking status of Plex processes... |& tee -a "${Log_File}"
 Response=$(synopkg status "$Plex_PKG")
@@ -388,20 +392,22 @@ if [[ ! $(grep "package is stopped" <<< "$Response") ]]; then
     echo "ERROR: Plex is still running! Aborting backup." |& tee -a "${Log_File}" "${Tmp_Err_Log_File}"
     # Start Plex to make sure it's not left partially running
     synopkg start "$Plex_PKG" >/dev/null 2> >(tee -a "${Log_File}" "${Tmp_Err_Log_File}" >&2)
-    if [[ $Brand == "Synology" ]] && [[ ${SysLog,,} == "yes" ]]; then
+    if [[ ${Brand,,} == "synology" ]] && [[ ${SysLog,,} == "yes" ]]; then
         # Add entry to Synology system log
         synologset1 sys warn 0x11100000 "Plex backup failed. Plex didn't shut down."
     fi
     # Abort script because Plex didn't shut down fully
     exit 255
+else
+    echo "All Plex processes have stopped." |& tee -a "${Log_File}"
 fi
 
 
 #--------------------------------------------------------------------------
 # Backup Plex Media Server
 
-echo "=======================================" |& tee -a "${Log_File}"
-echo "Backing up Plex Media Server data files:" |& tee -a "${Log_File}"
+echo "=================================================" |& tee -a "${Log_File}"
+echo "Backing up Plex Media Server data files..." |& tee -a "${Log_File}"
 
 Exclude_File="$( dirname -- "$0"; )/plex_backup_exclude.txt"
 
@@ -443,6 +449,7 @@ PMS="Plex Media Server"
 if [[ -n $Test ]]; then
     # Running backup test or error test
     if [[ ${LogAll,,} == "yes" ]]; then
+        echo "Logging all archived files" |& tee -a "${Log_File}"
         tar -cvpzf "${BD}"/"${BN}".tgz -C "${PDP}" "${Test}" > >(tee -a "${LF}") 2> >(tee -a "${LF}" "${TELF}" >&2)
     else
         # Don't log all backed up files.
@@ -454,6 +461,7 @@ else
     # Using -C to change directory to Plex's DSM 7 Appdata, or DSM 6 Library, folder to not backup absolute path
     # and avoid "tar: Removing leading /" error
     if [[ ${LogAll,,} == "yes" ]]; then
+        echo "Logging all archived files" |& tee -a "${Log_File}"
         tar -cvpzf "${BD}"/"${BN}".tgz "$@" -C "${PDP}" "$PMS/" > >(tee -a "${LF}") 2> >(tee -a "${LF}" "${TELF}" >&2)
     else
         # Don't log all backed up files.
@@ -462,15 +470,15 @@ else
     fi
 fi
 
+echo "Finished backing up Plex Media Server data files." |& tee -a "${Log_File}"
+echo "=================================================" |& tee -a "${Log_File}"
+
 
 #--------------------------------------------------------------------------
 # Start Plex Media Server
 
-echo "=======================================" |& tee -a "${Log_File}"
 echo Starting Plex... |& tee -a "${Log_File}"
-
 # synopkg must be run as root
-#synopkg start "$Plex_PKG" >/dev/null
 synopkg start "$Plex_PKG" >/dev/null 2> >(tee -a "${Log_File}" "${Tmp_Err_Log_File}" >&2)
 wait
 
