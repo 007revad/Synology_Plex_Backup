@@ -7,7 +7,7 @@
 
 This is a bash script to backup a Synology's Plex Media Server settings and database, and log the results.
 
-The script was written to work on DSM 7.x and DSM 6.x (**though it has only been tested on DSM 6**).
+The script works in DSM 7 and DSM 6.
 
 #### What the script does:
 
@@ -42,20 +42,6 @@ If you run multiple backups on the same day the time will be included in the fil
 -   DISKSTATION_20221025_1920_Plex_1.29.0.6244_Backup.tgz
 -   DISKSTATION_20221025_1920_Plex_1.29.0.6244_Backup.log
 
-### Testing the script
-
-If you run the script with the **test** argument it will only backup Plex's Profiles folder.
-
-```YAML
-"/volume1/scripts/Backup_Plex_on_Synology.sh test"
-```
-
-If you run the script with the **error** argument it will only backup Plex's Profiles folder and cause an error so you can test the error logging.
-
-```YAML
-"/volume1/scripts/Backup_Plex_on_Synology.sh error"
-```
-
 ### Settings
 
 You need to set **backupDirectory=** near the top of the script (below the header). Set it to the location where you want the backup saved to. 
@@ -66,13 +52,34 @@ You need to set **backupDirectory=** near the top of the script (below the heade
 backupDirectory="/volume1/Backups/Plex_Backups"
 ```
 
+**There are also a few optional settings:**
+
 The script gets the brand, model and hostname from the NAS to use logs and backup name.
 Set Name= to "brand", "model", "hostname" or some nickname. If Name= is blank the Synology's hostname will be used.
 
-**For example:**
-
 ```YAML
 Name="brand"
+```
+
+Log all files backed up. If enabled all files added to the tgz archive will be logged.
+Set LogAll= to "yes" or "no". Blank is the same as no.
+
+```YAML
+LogAll="no"
+```
+
+Add Plex backup success or Plex backup failed entry to DSM system log.
+Set SysLog= to "yes" or "no". Blank is the same as no.
+
+```YAML
+SysLog="yes"
+```
+
+Add success or failed entry to DSM notifications.
+Set Notify= to "yes" or "no". Blank is the same as no.
+
+```YAML
+Notify="yes"
 ```
 
 ### Requirements
@@ -81,3 +88,17 @@ Make sure that plex_backup_exclude.txt is in the same folder as backup_synology_
 
 **Note:** Due to some of the commands used **this script needs to be run as root, or be scheduled to run as root**.
 
+
+### Testing the script
+
+If you run the script with the **test** argument it will only backup Plex's Logs folder.
+
+```YAML
+"/volume1/scripts/Backup_Plex_on_Synology.sh" test
+```
+
+If you run the script with the **error** argument it will only backup Plex's Logs folder and cause an error so you can test the error logging.
+
+```YAML
+"/volume1/scripts/Backup_Plex_on_Synology.sh" error
+```
