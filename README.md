@@ -102,3 +102,19 @@ If you run the script with the **error** argument it will only backup Plex's Log
 ```YAML
 "/volume1/scripts/Backup_Plex_on_Synology.sh" error
 ```
+
+### Restoring a backup
+
+To restore Plex from a backup run the following in a shell:
+
+**Note:** Replace "/path/file.tgz" with your backup file's path and filename.
+
+For DSM 7
+```YAML
+tar -zxvpf /path/file.tgz -C "/volume1/PlexMediaServer/AppData/Plex Media Server/"
+```
+
+For DSM 6
+```YAML
+tar -zxvpf /path/file.tgz -C "/volume1/Plex/Library/Application Support/Plex Media Server/"
+```
