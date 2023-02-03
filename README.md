@@ -107,7 +107,7 @@ If you run the script with the **error** argument it will only backup Plex's Log
 
 To restore Plex from a backup run the following in a shell:
 
-**Note:** Replace "/path/file.tgz" with your backup file's path and filename.
+**Note:** Replace "/path/file.tgz" with your backup file's path and filename. Replace the 1 in volume1 with your volume number.
 
 For DSM 7
 ```YAML
