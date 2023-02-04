@@ -111,10 +111,10 @@ To restore Plex from a backup run the following in a shell:
 
 For DSM 7
 ```YAML
-tar -zxvpf /path/file.tgz -C "/volume1/PlexMediaServer/AppData/Plex Media Server/"
+tar -zxvpf /path/file.tgz -C "/volume1/PlexMediaServer/AppData/"
 ```
 
 For DSM 6
 ```YAML
-tar -zxvpf /path/file.tgz -C "/volume1/Plex/Library/Application Support/Plex Media Server/"
+tar -zxvpf /path/file.tgz -C "/volume1/Plex/Library/Application Support/"
 ```
