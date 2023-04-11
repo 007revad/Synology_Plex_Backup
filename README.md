@@ -43,6 +43,10 @@ If you run multiple backups on the same day the time will be included in the fil
 -   DISKSTATION_20221025_1920_Plex_1.29.0.6244_Backup.tgz
 -   DISKSTATION_20221025_1920_Plex_1.29.0.6244_Backup.log
 
+### Download the script
+
+See <a href=images/how_to_download_generic.png/>How to download the script</a> for the easiest way to download the script.
+
 ### Settings
 
 You need to set **backupDirectory=** near the top of the script (below the header). Set it to the location where you want the backup saved to. 
