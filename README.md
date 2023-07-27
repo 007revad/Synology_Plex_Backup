@@ -8,7 +8,8 @@
 
 This is a bash script to backup a Synology's Plex Media Server settings and database, and log the results.
 
-The script works in DSM 7 and DSM 6.
+-  Works for Plex installed from Package Center and in Docker.
+-  The script works in DSM 7 and DSM 6.
 
 #### What the script does:
 
@@ -55,6 +56,17 @@ You need to set **backupDirectory=** near the top of the script (below the heade
 
 ```YAML
 backupDirectory="/volume1/Backups/Plex_Backups"
+```
+
+**For Docker there are few more settings required:**
+
+```YAML
+# Backup docker Plex instead of package center Plex
+Docker="yes"
+# Path to Plex container's 'Application Support' folder
+Docker_plex_path="/volume1/docker/plex/Library/Application Support"
+# Plex container name
+Docker_plex_name="plexinc-pms-docker-1"
 ```
 
 **There are also a few optional settings:**
