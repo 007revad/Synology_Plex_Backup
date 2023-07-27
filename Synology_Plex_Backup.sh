@@ -8,7 +8,7 @@
 #
 # Run as from Synology task scheduler, WinSCP, Putty etc.
 #
-#   MUST be run by a user in sudo, sudoers or wheel group, or as root
+#  MUST be run by a user in sudo, sudoers or wheel group, or as root
 #
 # To run the script:
 # sudo -i /volume1/scripts/Synology_Plex_Backup.sh
