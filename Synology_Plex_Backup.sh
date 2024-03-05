@@ -126,6 +126,9 @@ esac
 
 
 #--------------------------------------------------------------------------
+# Create backup directory if not exists yet
+mkdir - p "$Backup_Directory"
+
 # Set temporary log filenames (we get the Plex version later)
 
 # Set backup filename
