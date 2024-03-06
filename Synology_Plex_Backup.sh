@@ -127,7 +127,14 @@ esac
 
 #--------------------------------------------------------------------------
 # Create backup directory if it does not exist yet
-[[ $Backup_Directory =~ ^/volume.* ]] && mkdir -p "$Backup_Directory"
+if [[ $Backup_Directory =~ ^/volume.* ]]; then
+    mkdir -p "$Backup_Directory"
+else
+    # Can't log error to log file because $Backup_Directory does not exist
+    echo -e "\nERROR: The parameter "Backup_Directory" has a wrong value ($Backup_Directory)"
+    echo -e "Please use only user's volumes (should start with /volumeN/ part!)"
+    exit 255
+fi
 
 # Set temporary log filenames (we get the Plex version later)
 
