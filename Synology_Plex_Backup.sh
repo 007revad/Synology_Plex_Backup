@@ -126,8 +126,8 @@ esac
 
 
 #--------------------------------------------------------------------------
-# Create backup directory if not exists yet
-mkdir -p "$Backup_Directory"
+# Create backup directory if it does not exist yet
+[[ $Backup_Directory =~ ^/volume.* ]] && mkdir -p "$Backup_Directory"
 
 # Set temporary log filenames (we get the Plex version later)
 
