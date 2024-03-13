@@ -237,7 +237,7 @@ cleanup() {
             # Add DSM 7 notification - NOT WORKING YET
             synodsmnotify @administrators '{"Plex Backup Finished" "Plex backup completed successfully."}'
             # Send email and/or SMS - NOT WORKING YET
-            synonotify PKGHasUpgrade '{"%PKG_HAS_UPDATE%": "Plex Media Server\n\nSyno.Plex Update task failed. DSM not sufficient version."}'
+            #synonotify PKGHasUpgrade '{"%PKG_HAS_UPDATE%": "Plex Media Server\n\nSyno.Plex Update task failed. DSM not sufficient version."}'
         fi
     fi
     exit "${arg1}"
